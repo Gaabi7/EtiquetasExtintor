@@ -44,7 +44,7 @@ public class LeitorExcel {
                 Extintor extintor = new Extintor(
                         numeroDePosicionamento, tipo, capacidade,
                         numeroDeIdentificacao, dataDeRecarga, ultimoTeste,
-                        regiao, endereco, proximaRecarga, proximoTeste,
+                        regiao, endereco, proximaRecarga, proximoTeste
                 );
 
                 extintores.add(extintor);
