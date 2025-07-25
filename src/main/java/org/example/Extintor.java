@@ -7,14 +7,24 @@ public class Extintor {
     private String numeroDeIdentificacao;
     private String dataDeRecarga;
     private String ultimoTeste;
+    private String regiao;
+    private String endereco;
+    private String proximaRecarga;
+    private String proximoTeste;
 
-    public Extintor(String numeroDePosicionamento, String tipo, String capacidade, String numeroDeIdentificacao, String dataDeRecarga, String ultimoTeste) {
+    public Extintor(String numeroDePosicionamento, String tipo, String capacidade, String numeroDeIdentificacao, String dataDeRecarga,
+                    String ultimoTeste, String regiao, String endereco, String proximaRecarga, String proximoTeste) {
+
         this.numeroDePosicionamento = numeroDePosicionamento;
         this.tipo = tipo;
         this.capacidade = capacidade;
         this.numeroDeIdentificacao = numeroDeIdentificacao;
         this.dataDeRecarga = dataDeRecarga;
         this.ultimoTeste = ultimoTeste;
+        this.regiao = regiao;
+        this.endereco = endereco;
+        this.proximaRecarga = proximaRecarga;
+        this.proximoTeste = proximoTeste;
     }
 
     public String getNumeroDePosicionamento() {
@@ -41,6 +51,22 @@ public class Extintor {
         return ultimoTeste;
     }
 
+    public String getRegiao() {
+        return regiao;
+    }
+
+    public String getEndereco() {
+        return endereco;
+    }
+
+    public String getProximaRecarga() {
+        return proximaRecarga;
+    }
+
+    public String getProximoTeste() {
+        return proximoTeste;
+    }
+
     @Override
     public String toString() {
         return "Extintor{" +
@@ -50,6 +76,10 @@ public class Extintor {
                 ", numeroDeIdentificacao='" + numeroDeIdentificacao + '\'' +
                 ", dataDeRecarga='" + dataDeRecarga + '\'' +
                 ", ultimoTeste='" + ultimoTeste + '\'' +
+                ", regiao='" + regiao + '\'' +
+                ", endereco='" + endereco + '\'' +
+                ", proximaRecarga='" + proximaRecarga + '\'' +
+                ", proximoTeste='" + proximoTeste + '\'' +
                 '}';
     }
 }

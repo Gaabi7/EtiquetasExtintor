@@ -35,10 +35,16 @@ public class LeitorExcel {
                 String numeroDeIdentificacao = row.getCell(3).getStringCellValue();
                 String dataDeRecarga = formatarData(row.getCell(4), mesAnoFormatter);
                 String ultimoTeste = formatarData(row.getCell(5), apenasAnoFormatter);
+                String regiao = row.getCell(6).getStringCellValue();
+                String endereco = row.getCell(7).getStringCellValue();
+                String proximaRecarga = formatarData(row.getCell(8), mesAnoFormatter);
+                String proximoTeste = formatarData(row.getCell(9), apenasAnoFormatter);
+
 
                 Extintor extintor = new Extintor(
                         numeroDePosicionamento, tipo, capacidade,
-                        numeroDeIdentificacao, dataDeRecarga, ultimoTeste
+                        numeroDeIdentificacao, dataDeRecarga, ultimoTeste,
+                        regiao, endereco, proximaRecarga, proximoTeste,
                 );
 
                 extintores.add(extintor);
