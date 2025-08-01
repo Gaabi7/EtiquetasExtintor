@@ -12,8 +12,10 @@ import java.util.List;
 import java.util.Locale;
 
 public class LeitorExcel {
+
     private static final DateTimeFormatter mesAnoFormatter = DateTimeFormatter.ofPattern("MMM-yyyy", new Locale("pt", "BR"));
     private static final DateTimeFormatter apenasAnoFormatter = DateTimeFormatter.ofPattern("yyyy");
+
     public static List<Extintor> lerExtintoresDoExcel(InputStream arquivoExcel) {
         List<Extintor> extintores = new ArrayList<>();
 
@@ -29,16 +31,17 @@ public class LeitorExcel {
                 Row row = sheet.getRow(i);
 
                 //Pegar os Valores das celulas
-                String numeroDePosicionamento = row.getCell(0).getStringCellValue();
-                String tipo = row.getCell(1).getStringCellValue();
-                String capacidade = row.getCell(2).getStringCellValue();
-                String numeroDeIdentificacao = row.getCell(3).getStringCellValue();
+                String numeroDePosicionamento = getCellValueAsString(row.getCell(0));
+                String tipo = getCellValueAsString(row.getCell(1));
+                String capacidade = getCellValueAsString(row.getCell(2));
+                String numeroDeIdentificacao = getCellValueAsString(row.getCell(3));
                 String dataDeRecarga = formatarData(row.getCell(4), mesAnoFormatter);
                 String ultimoTeste = formatarData(row.getCell(5), apenasAnoFormatter);
-                String regiao = row.getCell(6).getStringCellValue();
-                String endereco = row.getCell(7).getStringCellValue();
+                String regiao = getCellValueAsString(row.getCell(6));
+                String endereco = getCellValueAsString(row.getCell(7));
                 String proximaRecarga = formatarData(row.getCell(8), mesAnoFormatter);
                 String proximoTeste = formatarData(row.getCell(9), apenasAnoFormatter);
+
 
 
                 Extintor extintor = new Extintor(
@@ -59,15 +62,19 @@ public class LeitorExcel {
 
     //pegar os valores e passar para texto independente do conteudo da celula
     private static String getCellValueAsString(Cell cell) {
+
         if (cell == null) return "";
         if (cell.getCellType() == CellType.STRING) {
             return cell.getStringCellValue().trim();
+
         } else if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
             // Caso seja data, formatar com dia, mês e ano
             LocalDate data = cell.getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             return data.toString(); // ou formatar como quiser
+
         } else if (cell.getCellType() == CellType.NUMERIC) {
             return String.valueOf((long) cell.getNumericCellValue());
+
         }
         return "";
     }

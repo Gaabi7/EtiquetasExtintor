@@ -81,7 +81,7 @@ public class GeradorZPL {
         sb.append("^FO262,640^GB0,577,3^FS");
         sb.append("^FO569,639^GB0,577,3^FS");
         sb.append("^FO373,640^GB0,577,3^FS");
-        sb.append("^FT292,350^A0N,28,28^FH\\^FD{TIPO}} / {CAPACIDADE}^FS");
+        sb.append("^FT292,350^A0N,28,28^FH\\^FD{TIPO} / {CAPACIDADE}^FS");
         sb.append("^FT329,389^A0N,28,28^FH\\^FD{DATA_RECARGA_DIA}^FS");
         sb.append("^FT469,392^A0N,28,28^FH\\^FD{DATA_RECARGA_MES}^FS");
         sb.append("^FT642,389^A0N,28,28^FH\\^FD{DATA_RECARGA_ANO}^FS");
@@ -109,13 +109,21 @@ public class GeradorZPL {
 
         zpl = zpl.replace("{NUM_IDENTIFICACAO}", extintor.getNumeroDeIdentificacao());
         zpl = zpl.replace("{NUM_POSICIONAMENTO}", extintor.getNumeroDePosicionamento());
-        zpl = zpl.replace("{TIPO}} / {CAPACIDADE}", extintor.getTipo() + " / " + extintor.getCapacidade());
+        zpl = zpl.replace("{TIPO} / {CAPACIDADE}", extintor.getTipo() + " / " + extintor.getCapacidade());
         zpl = zpl.replace("{REGIAO}", extintor.getRegiao());
         zpl = zpl.replace("{ENDERECO}", extintor.getEndereco());
 
-        zpl = substituirData(zpl, "{RECARGA}", extintor.getDataDeRecarga());
-        zpl = substituirData(zpl, "{PROX_RECARGA}", extintor.getProximaRecarga());
-        zpl = substituirData(zpl, "{PROX_TESTE}", extintor.getProximoTeste());
+        zpl = substituirData(zpl, "{DATA_RECARGA_DIA}", extintor.getDataDeRecarga());
+        zpl = substituirData(zpl, "{DATA_RECARGA_MES}", extintor.getDataDeRecarga());
+
+        zpl = substituirData(zpl, "{ULTIMO_TESTE_ANO}", extintor.getUltimoTeste());
+
+        zpl = substituirData(zpl, "{PROXIMA_RECARGA_MES}", extintor.getProximaRecarga());
+        zpl = substituirData(zpl, "{PROXIMA_RECARGA_ANO}", extintor.getProximaRecarga());
+
+        zpl = substituirData(zpl, "{PROXIMO_TESTE_ANO}", extintor.getProximoTeste());
+
+        zpl = zpl.replace("{QRCODE}", extintor.getNumeroDeIdentificacao());
 
         return zpl;
     }
