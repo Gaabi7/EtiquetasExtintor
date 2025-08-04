@@ -42,7 +42,18 @@ public class LeitorExcel {
                 String proximaRecarga = formatarData(row.getCell(8), mesAnoFormatter);
                 String proximoTeste = formatarData(row.getCell(9), apenasAnoFormatter);
 
-
+                // DEBUG: imprime os valores lidos e formatados
+                System.out.println("Linha " + i + ":");
+                System.out.println("  Num. Posicionamento: " + numeroDePosicionamento);
+                System.out.println("  Tipo / Capacidade: " + tipo + " / " + capacidade);
+                System.out.println("  Num. Identificação: " + numeroDeIdentificacao);
+                System.out.println("  Data de Recarga: " + dataDeRecarga);
+                System.out.println("  Último Teste: " + ultimoTeste);
+                System.out.println("  Região: " + regiao);
+                System.out.println("  Endereço: " + endereco);
+                System.out.println("  Próxima Recarga: " + proximaRecarga);
+                System.out.println("  Próximo Teste: " + proximoTeste);
+                System.out.println("--------------------------------------");
 
                 Extintor extintor = new Extintor(
                         numeroDePosicionamento, tipo, capacidade,
