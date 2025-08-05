@@ -35,30 +35,38 @@ public class LeitorExcel {
                 String tipo = getCellValueAsString(row.getCell(1));
                 String capacidade = getCellValueAsString(row.getCell(2));
                 String numeroDeIdentificacao = getCellValueAsString(row.getCell(3));
-                String dataDeRecarga = formatarData(row.getCell(4), mesAnoFormatter);
-                String ultimoTeste = formatarData(row.getCell(5), apenasAnoFormatter);
                 String regiao = getCellValueAsString(row.getCell(6));
                 String endereco = getCellValueAsString(row.getCell(7));
-                String proximaRecarga = formatarData(row.getCell(8), mesAnoFormatter);
-                String proximoTeste = formatarData(row.getCell(9), apenasAnoFormatter);
 
-                // DEBUG: imprime os valores lidos e formatados
-                System.out.println("Linha " + i + ":");
-                System.out.println("  Num. Posicionamento: " + numeroDePosicionamento);
-                System.out.println("  Tipo / Capacidade: " + tipo + " / " + capacidade);
-                System.out.println("  Num. Identificação: " + numeroDeIdentificacao);
-                System.out.println("  Data de Recarga: " + dataDeRecarga);
-                System.out.println("  Último Teste: " + ultimoTeste);
-                System.out.println("  Região: " + regiao);
-                System.out.println("  Endereço: " + endereco);
-                System.out.println("  Próxima Recarga: " + proximaRecarga);
-                System.out.println("  Próximo Teste: " + proximoTeste);
-                System.out.println("--------------------------------------");
+                //separa as datas
+                String dataDeRecarga = formatarData(row.getCell(4), mesAnoFormatter);
+                String mesRecarga = "", anoRecarga = "";
+                if (dataDeRecarga.contains("/")) {
+                    String[] partes = dataDeRecarga.split("-");
+                    mesRecarga = partes[0];
+                    anoRecarga = partes[1];
+                }
+
+                //ultimo Teste (somente ano)
+                String anoUltimoTeste = formatarData(row.getCell(5), apenasAnoFormatter);
+
+                // Proxima Recarga (mes-ano)
+                String proximaRecarga = formatarData(row.getCell(8), mesAnoFormatter);
+                String mesProximaRecarga = "", anoProximaRecarga = "";
+                if (proximaRecarga.contains("/")) {
+                    String[] partes = proximaRecarga.split("-");
+                    mesProximaRecarga = partes[0];
+                    anoProximaRecarga = partes[1];
+                }
+
+                // Proximo Teste (somente ano)
+                String anoProximoTeste = formatarData(row.getCell(9), apenasAnoFormatter);
 
                 Extintor extintor = new Extintor(
                         numeroDePosicionamento, tipo, capacidade,
-                        numeroDeIdentificacao, dataDeRecarga, ultimoTeste,
-                        regiao, endereco, proximaRecarga, proximoTeste
+                        numeroDeIdentificacao, mesRecarga, anoRecarga,
+                        anoUltimoTeste, regiao, endereco,
+                        mesProximaRecarga, anoProximaRecarga, anoProximoTeste
                 );
 
                 extintores.add(extintor);

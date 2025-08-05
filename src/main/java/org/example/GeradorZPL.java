@@ -113,15 +113,15 @@ public class GeradorZPL {
         zpl = zpl.replace("{REGIAO}", extintor.getRegiao());
         zpl = zpl.replace("{ENDERECO}", extintor.getEndereco());
 
-        zpl = substituirData(zpl, "{DATA_RECARGA_DIA}", extintor.getDataDeRecarga());
-        zpl = substituirData(zpl, "{DATA_RECARGA_MES}", extintor.getDataDeRecarga());
+        zpl = substituirData(zpl, "{DATA_RECARGA_MES}", extintor.getMesRecarga());
+        zpl = substituirData(zpl, "{DATA_RECARGA_ANO}", extintor.getAnoRecarga());
 
-        zpl = substituirData(zpl, "{ULTIMO_TESTE_ANO}", extintor.getUltimoTeste());
+        zpl = substituirData(zpl, "{ULTIMO_TESTE_ANO}", extintor.getAnoUltimoTeste());
 
-        zpl = substituirData(zpl, "{PROXIMA_RECARGA_MES}", extintor.getProximaRecarga());
-        zpl = substituirData(zpl, "{PROXIMA_RECARGA_ANO}", extintor.getProximaRecarga());
+        zpl = substituirData(zpl, "{PROXIMA_RECARGA_MES}", extintor.getMesProximaRecarga());
+        zpl = substituirData(zpl, "{PROXIMA_RECARGA_ANO}", extintor.getAnoProximaRecarga());
 
-        zpl = substituirData(zpl, "{PROXIMO_TESTE_ANO}", extintor.getProximoTeste());
+        zpl = substituirData(zpl, "{PROXIMO_TESTE_ANO}", extintor.getAnoProximoTeste());
 
         zpl = zpl.replace("{QRCODE}", extintor.getNumeroDeIdentificacao());
 
@@ -130,7 +130,6 @@ public class GeradorZPL {
 
     private static String substituirData(String zpl, String tipo, String data) {
         if (data == null || data.trim().isEmpty()) {
-            zpl = zpl.replace("{" + tipo + "_DIA}", "");
             zpl = zpl.replace("{" + tipo + "_MES}", "");
             zpl = zpl.replace("{" + tipo + "_ANO}", "");
             return zpl;
@@ -139,7 +138,6 @@ public class GeradorZPL {
         String[] partes = data.split("/");
 
         if(partes.length == 3) {
-            zpl = zpl.replace("{" + tipo + "_DIA}", partes[0]);
             zpl = zpl.replace("{" + tipo + "_MES}", partes[1]);
             zpl = zpl.replace("{" + tipo + "_ANO}", partes[2]);
         }
