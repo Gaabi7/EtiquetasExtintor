@@ -1,5 +1,6 @@
 package org.example;
 
+import java.util.Optional;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -8,6 +9,7 @@ import java.io.InputStream;
 
 public class InterfaceExtintor extends JFrame {
 
+    private List<Extintor> extintores;
     private JTextField campoLocalidade;
     private JTextArea areaEtiqueta;
     private JButton botaoVisualizar;
@@ -20,7 +22,7 @@ public class InterfaceExtintor extends JFrame {
         setLayout(new BorderLayout());
 
         //carrega os entintores da planilha
-        InputStream arquivo = App.class.getResourceAsStream("/arquivo.xlsx");
+        InputStream arquivo = App.class.getResourceAsStream("/extintores.xlsx");
         extintores = LeitorExcel.lerExtintoresDoExcel(arquivo);
 
         // Painel superior com campo e botões
@@ -49,7 +51,7 @@ public class InterfaceExtintor extends JFrame {
         setVisible(true);
     }
 
-    private void BuscarPorLocalidade() {
+    private void buscarPorLocalidade() {
         String localidade = campoLocalidade.getText().trim();
 
         Optional<Extintor> extOpt = extintores.stream()
@@ -57,7 +59,7 @@ public class InterfaceExtintor extends JFrame {
                 .findFirst();
 
         if(extOpt.isPresent()) {
-            extintores ext = extOpt.get();
+            Extintor ext = extOpt.get();
 
             String zpl = String.format("""
                     CT~CD,~CC^~CT
@@ -94,29 +96,29 @@ public class InterfaceExtintor extends JFrame {
                     ^FO0,0^GFA,04608,04608,00024,:Z64:
                     eJztk7+L02AYx583P0DuJCaQQocMRffSMajUN3DdHFJItgqCm7uzwUMsJ7xdnZ2OO6hrOeTuFSwcOtg/wMALWaSFq+AS6pH4NmnaXIKrILyfQHn49ptPHvK2AAKBQCAQ/J9Id6vkuepXyfP7x8Ob1wnLcrdmxtln60bW2iYYrYU6AqO4W89yJk0CCR7uBzaDpkxAAjvvKzooYKnQxOu7+Jz3n/LvNWjvA+/b8is+dzZP18EEswE6BrfUZxBDG0g7mDCYyJTPGz/f4QAeK9Dn2yBa6jMgoGnwHKQOn3d+zDuKAs56e7fcl8ZACDC6F3P3eOuncBtUCxzK21Zp/7VTa0LEWh2wpa0fcT9STOTwzXR955fpLQ2GNvoa0Nie8Nku+rqJwEMeYNfEurI5EVY7l85fzitPVsMKR3GWP6n9HmZZ/jKt8jPLa3U/9/MCCaJ4NKIxY+TiME03/jBUwZmpr6lBsWWhMJwV/TcR+/XhkNikm3QflPxqD/d91DOQ55mNnT+5t7yM0tNv7+h1TN6mi8L/HU0/O6ExNejAVVEIxf6JHAXPruSRfdaNtR/p+8LvoR70D7hfMV3F8KHwX8fLsU3iL5Ojj/Or4/Rk63enlm4NcJ8OnCkKP+X+R+lqtbw4P0/mv+fJYnGaLvITabzwKxfO8ju19xlkee3/6NUOUCAQCAQCwT/gD+fRCoA=:C48E
                     ^FO17,174^GB798,1097,8^FS
-                    ^FT262,64^A0N,25,31^FB276,1,0,C^FH\\^FDTecidos e Armarinhos^FS
-                    ^FT262,95^A0N,25,31^FB276,1,0,C^FH\\^FD Miguel Bartolomeu^FS
-                    ^FT221,150^A0N,28,28^FH\\^FDControle de Vistoria de Extintor^FS
-                    ^FT30,233^A0N,28,28^FH\\^FDN\\A7 DE IDENTIFI:^FS
+                    ^FT262,64^A0N,25,31^FB276,1,0,C^FH\^FDTecidos e Armarinhos^FS
+                    ^FT262,95^A0N,25,31^FB276,1,0,C^FH\^FD Miguel Bartolomeu^FS
+                    ^FT221,150^A0N,28,28^FH\^FDControle de Vistoria de Extintor^FS
+                    ^FT30,233^A0N,28,28^FH\^FDN\A7 DE IDENTIFI:^FS
                     ^FO228,234^GB153,0,3^FS
-                    ^FT104,591^A0N,21,24^FH\\^FDINSPE\\80AO MENSAL DE EQUIPAMENTO DE COMBATE A INCENDIO^FS
+                    ^FT104,591^A0N,21,24^FH\^FDINSPE\80AO MENSAL DE EQUIPAMENTO DE COMBATE A INCENDIO^FS
                     ^FO39,637^GB757,581,4^FS
-                    ^FT76,662^A0N,20,19^FH\\^FDDIA^FS
-                    ^FT188,662^A0N,20,19^FH\\^FDMES^FS
-                    ^FT301,662^A0N,20,19^FH\\^FDANO^FS
-                    ^FT414,662^A0N,20,19^FH\\^FDOBSERVA\\80AO^FS
-                    ^FT652,662^A0N,20,19^FH\\^FDVISTO^FS
+                    ^FT76,662^A0N,20,19^FH\^FDDIA^FS
+                    ^FT188,662^A0N,20,19^FH\^FDMES^FS
+                    ^FT301,662^A0N,20,19^FH\^FDANO^FS
+                    ^FT414,662^A0N,20,19^FH\^FDOBSERVA\80AO^FS
+                    ^FT652,662^A0N,20,19^FH\^FDVISTO^FS
                     ^FT649,159^BQN,2,6
-                    ^FH\\^FDLA,80087^FS
-                    ^FT262,233^A0N,28,28^FH\\^FDI 11111^FS
+                    ^FH\^FDLA,80087^FS
+                    ^FT262,233^A0N,28,28^FH\^FD%s^FS
                     ^FO39,714^GB754,0,3^FS
-                    ^FT49,359^A0N,28,28^FH\\^FDTIPO/CAPACIDADE:^FS
+                    ^FT49,359^A0N,28,28^FH\^FDTIPO / CAPACIDADE:^FS
                     ^FO283,354^GB475,0,3^FS
-                    ^FT49,397^A0N,28,28^FH\\^FDDATA DA RECARGA:^FS
-                    ^FT49,279^A0N,28,28^FH\\^FDLOCAL:^FS
+                    ^FT49,397^A0N,28,28^FH\^FDDATA DA RECARGA:^FS
+                    ^FT49,279^A0N,28,28^FH\^FDLOCAL:^FS
                     ^FO143,274^GB614,0,3^FS
-                    ^FT49,438^A0N,28,28^FH\\^FDPROXIMA RECARGA:^FS
-                    ^FT49,519^A0N,28,28^FH\\^FDPROXIMA TESTE:^FS
+                    ^FT49,438^A0N,28,28^FH\^FDPROXIMA RECARGA:^FS
+                    ^FT49,519^A0N,28,28^FH\^FDPROXIMA TESTE:^FS
                     ^FO49,315^GB709,0,3^FS
                     ^FO39,675^GB754,0,3^FS
                     ^FO41,752^GB754,0,3^FS
@@ -136,29 +138,39 @@ public class InterfaceExtintor extends JFrame {
                     ^FO262,640^GB0,577,3^FS
                     ^FO569,639^GB0,577,3^FS
                     ^FO373,640^GB0,577,3^FS
-                    ^FT292,350^A0N,28,28^FH\\^FDTeste do tipo e a capacidade 777^FS
-                    ^FT329,389^A0N,28,28^FH\\^FDRdia^FS
-                    ^FT469,392^A0N,28,28^FH\\^FDRmes^FS
-                    ^FT642,389^A0N,28,28^FH\\^FDRano^FS
-                    ^FT329,432^A0N,28,28^FH\\^FDPXdia^FS
-                    ^FT469,431^A0N,28,28^FH\\^FDPXmes^FS
-                    ^FT642,432^A0N,28,28^FH\\^FDPXano^FS
-                    ^FT307,512^A0N,28,28^FH\\^FDTdia^FS
-                    ^FT469,512^A0N,28,28^FH\\^FDTmes^FS
-                    ^FT642,512^A0N,28,28^FH\\^FDTano^FS
-                    ^FT392,233^A0N,28,28^FH\\^FDN\\A7 DE LOCALIDADE:^FS
+                    ^FT292,350^A0N,28,28^FH\^FD%s / %s^FS
+                    ^FT329,389^A0N,28,28^FH\^FD ^FS
+                    ^FT469,392^A0N,28,28^FH\^FD%s^FS
+                    ^FT642,389^A0N,28,28^FH\^FD%s^FS
+                    ^FT329,432^A0N,28,28^FH\^FD ^FS
+                    ^FT469,431^A0N,28,28^FH\^FD%s^FS
+                    ^FT642,432^A0N,28,28^FH\^FD%s^FS
+                    ^FT307,512^A0N,28,28^FH\^FD ^FS
+                    ^FT469,512^A0N,28,28^FH\^FD ^FS
+                    ^FT642,512^A0N,28,28^FH\^FD%s^FS
+                    ^FT392,233^A0N,28,28^FH\^FDN\A7 DE LOCALIDADE:^FS
                     ^FO637,234^GB153,0,3^FS
-                    ^FT686,233^A0N,28,28^FH\\^FD2222^FS
-                    ^FT143,274^A0N,28,28^FH\\^FDTESTE REGIAO^FS
-                    ^FT49,316^A0N,28,28^FH\\^FDTESTE ENDERECO^FS
-                    ^FT49,477^A0N,28,28^FH\\^FD\\E9LTIMO TESTE:^FS
-                    ^FT292,472^A0N,28,28^FH\\^FDUdia^FS
-                    ^FT469,472^A0N,28,28^FH\\^FDUmes^FS
-                    ^FT642,472^A0N,28,28^FH\\^FDUano^FS
+                    ^FT686,233^A0N,28,28^FH\^FD%s^FS
+                    ^FT143,274^A0N,28,28^FH\^FD%s^FS
+                    ^FT49,316^A0N,28,28^FH\^FD%s^FS
+                    ^FT49,477^A0N,28,28^FH\^FD\E9LTIMO TESTE:^FS
+                    ^FT292,472^A0N,28,28^FH\^FD ^FS
+                    ^FT469,472^A0N,28,28^FH\^FD ^FS
+                    ^FT642,472^A0N,28,28^FH\^FD%s^FS
                     ^PQ1,0,1,Y^XZ
+                    """);
 
-
-                    """,);
+                    ext.getNumeroDeIdentificacao(),
+                    ext.getTipo(), ext.getCapacidade(),
+                    ext.getMesRecarga(),
+                    ext.getAnoRecarga(),
+                    ext.getMesProximaRecarga(),
+                    ext.getAnoProximaRecarga(),
+                    ext.getAnoProximoTeste(),
+                    ext.getNumeroDePosicionamento(),
+                    ext.getRegiao(),
+                    ext.getEndereco(),
+                    ext.getAnoUltimoTeste()
 
 
             areaEtiqueta.setText(zpl);
