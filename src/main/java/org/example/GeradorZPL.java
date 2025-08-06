@@ -104,25 +104,26 @@ public class GeradorZPL {
 
 }
 
-    public static String gerarEtiquetas(Extintor extintor) {
-        String zpl = modelo_ZPL;
+    public static String gerarEtiqueta(Extintor extintor) { // Renomeado para singular
+        String zpl = modelo_ZPL; // Começa com o modelo original
 
+        // Substituições diretas
         zpl = zpl.replace("{NUM_IDENTIFICACAO}", extintor.getNumeroDeIdentificacao());
         zpl = zpl.replace("{NUM_POSICIONAMENTO}", extintor.getNumeroDePosicionamento());
-        zpl = zpl.replace("{TIPO} / {CAPACIDADE}", extintor.getTipo() + " / " + extintor.getCapacidade());
+        zpl = zpl.replace("{TIPO}", extintor.getTipo());
+        zpl = zpl.replace("{CAPACIDADE}", extintor.getCapacidade());
         zpl = zpl.replace("{REGIAO}", extintor.getRegiao());
         zpl = zpl.replace("{ENDERECO}", extintor.getEndereco());
 
-        zpl = substituirData(zpl, "{DATA_RECARGA_MES}", extintor.getMesRecarga());
-        zpl = substituirData(zpl, "{DATA_RECARGA_ANO}", extintor.getAnoRecarga());
+        // Substituição de datas
+        zpl = zpl.replace("{DATA_RECARGA_MES}", extintor.getMesRecarga());
+        zpl = zpl.replace("{DATA_RECARGA_ANO}", extintor.getAnoRecarga());
+        zpl = zpl.replace("{ULTIMO_TESTE_ANO}", extintor.getAnoUltimoTeste());
+        zpl = zpl.replace("{PROXIMA_RECARGA_MES}", extintor.getMesProximaRecarga());
+        zpl = zpl.replace("{PROXIMA_RECARGA_ANO}", extintor.getAnoProximaRecarga());
+        zpl = zpl.replace("{PROXIMO_TESTE_ANO}", extintor.getAnoProximoTeste());
 
-        zpl = substituirData(zpl, "{ULTIMO_TESTE_ANO}", extintor.getAnoUltimoTeste());
-
-        zpl = substituirData(zpl, "{PROXIMA_RECARGA_MES}", extintor.getMesProximaRecarga());
-        zpl = substituirData(zpl, "{PROXIMA_RECARGA_ANO}", extintor.getAnoProximaRecarga());
-
-        zpl = substituirData(zpl, "{PROXIMO_TESTE_ANO}", extintor.getAnoProximoTeste());
-
+        // QR Code
         zpl = zpl.replace("{QRCODE}", extintor.getNumeroDeIdentificacao());
 
         return zpl;

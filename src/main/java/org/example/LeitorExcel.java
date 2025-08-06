@@ -63,13 +63,21 @@ public class LeitorExcel {
                 String anoProximoTeste = formatarData(row.getCell(9), apenasAnoFormatter);
 
                 Extintor extintor = new Extintor(
-                        numeroDePosicionamento, tipo, capacidade,
-                        numeroDeIdentificacao, mesRecarga, anoRecarga,
-                        anoUltimoTeste, regiao, endereco,
-                        mesProximaRecarga, anoProximaRecarga, anoProximoTeste
+                    numeroDePosicionamento,     
+                    tipo,                       
+                    capacidade,                 
+                    numeroDeIdentificacao,      
+                    regiao,                     
+                    endereco,                   
+                    mesRecarga,                 
+                    anoRecarga,                 
+                    anoUltimoTeste,             
+                    mesProximaRecarga,          
+                    anoProximaRecarga,          
+                    anoProximoTeste             
                 );
 
-                extintores.add(extintor);
+extintores.add(extintor);
             }
 
         } catch (IOException e) {
