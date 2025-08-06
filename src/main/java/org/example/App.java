@@ -1,8 +1,9 @@
 package org.example;
 
-import javax.swing.SwingUtilities;
 import java.io.InputStream;
 import java.util.List;
+
+import javax.swing.SwingUtilities;
 
 public class App {
     public static void main(String[] args) {
@@ -30,6 +31,6 @@ public class App {
             new InterfaceExtintor();
         });
 
-        System.out.println("Interface gráfica agendada para inicialização.");
+        
     }
 }
