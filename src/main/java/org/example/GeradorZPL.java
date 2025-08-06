@@ -82,14 +82,14 @@ public class GeradorZPL {
         sb.append("^FO569,639^GB0,577,3^FS");
         sb.append("^FO373,640^GB0,577,3^FS");
         sb.append("^FT292,350^A0N,28,28^FH\\^FD{TIPO} / {CAPACIDADE}^FS");
-        sb.append("^FT329,389^A0N,28,28^FH\\^FD{DATA_RECARGA_DIA}^FS");
+        sb.append("^FT329,389^A0N,28,28^FH\\^FD     ^FS");
         sb.append("^FT469,392^A0N,28,28^FH\\^FD{DATA_RECARGA_MES}^FS");
         sb.append("^FT642,389^A0N,28,28^FH\\^FD{DATA_RECARGA_ANO}^FS");
-        sb.append("^FT329,432^A0N,28,28^FH\\^FD{PROXIMA_RECARGA_DIA}^FS");
+        sb.append("^FT329,432^A0N,28,28^FH\\^FD ^FS");
         sb.append("^FT469,431^A0N,28,28^FH\\^FD{PROXIMA_RECARGA_MES}^FS");
         sb.append("^FT642,432^A0N,28,28^FH\\^FD{PROXIMA_RECARGA_ANO}^FS");
-        sb.append("^FT307,512^A0N,28,28^FH\\^FD{PROXIMO_TESTE_DIA}^FS");
-        sb.append("^FT469,512^A0N,28,28^FH\\^FD{PROXIMO_TESTE_MES}^FS");
+        sb.append("^FT307,512^A0N,28,28^FH\\^FD ^FS");
+        sb.append("^FT469,512^A0N,28,28^FH\\^FD ^FS");
         sb.append("^FT642,512^A0N,28,28^FH\\^FD{PROXIMO_TESTE_ANO}^FS");
         sb.append("^FT392,233^A0N,28,28^FH\\^FDN\\A7 DE LOCALIDADE:^FS");
         sb.append("^FO637,234^GB153,0,3^FS");
@@ -97,8 +97,8 @@ public class GeradorZPL {
         sb.append("^FT143,274^A0N,28,28^FH\\^FD{REGIAO}^FS");
         sb.append("^FT49,316^A0N,28,28^FH\\^FD{ENDERECO}^FS");
         sb.append("^FT49,477^A0N,28,28^FH\\^FD\\E9LTIMO TESTE:^FS");
-        sb.append("^FT292,472^A0N,28,28^FH\\^FD{ULTIMO_TESTE_DIA}^FS");
-        sb.append("^FT469,472^A0N,28,28^FH\\^FD{ULTIMO_TESTE_MES}^FS");
+        sb.append("^FT292,472^A0N,28,28^FH\\^FD ^FS");
+        sb.append("^FT469,472^A0N,28,28^FH\\^FD ^FS");
         sb.append("^FT642,472^A0N,28,28^FH\\^FD{ULTIMO_TESTE_ANO}^FS");
         sb.append("^PQ1,0,1,Y^XZ");
 

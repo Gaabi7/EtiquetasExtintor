@@ -16,9 +16,8 @@ public class Extintor {
 
 
     public Extintor(String numeroDePosicionamento, String tipo, String capacidade, String numeroDeIdentificacao,
-                    String regiao, String endereco,String mesRecarga, String anoRecarga, String anoUltimoTeste, String mesProximaRecarga,
-                    String anoProximaRecarga, String anoProximoTeste ) {
-
+                    String regiao, String endereco, String mesRecarga, String anoRecarga, String anoUltimoTeste,
+                    String mesProximaRecarga, String anoProximaRecarga, String anoProximoTeste) {
         this.numeroDePosicionamento = numeroDePosicionamento;
         this.tipo = tipo;
         this.capacidade = capacidade;

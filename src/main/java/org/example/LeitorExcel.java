@@ -42,7 +42,7 @@ public class LeitorExcel {
                 String dataDeRecarga = formatarData(row.getCell(4), mesAnoFormatter);
                 String mesRecarga = "", anoRecarga = "";
                 if (dataDeRecarga.contains("/")) {
-                    String[] partes = dataDeRecarga.split("-");
+                    String[] partes = dataDeRecarga.split("/");
                     mesRecarga = partes[0];
                     anoRecarga = partes[1];
                 }
@@ -54,7 +54,7 @@ public class LeitorExcel {
                 String proximaRecarga = formatarData(row.getCell(8), mesAnoFormatter);
                 String mesProximaRecarga = "", anoProximaRecarga = "";
                 if (proximaRecarga.contains("/")) {
-                    String[] partes = proximaRecarga.split("-");
+                    String[] partes = proximaRecarga.split("/");
                     mesProximaRecarga = partes[0];
                     anoProximaRecarga = partes[1];
                 }
