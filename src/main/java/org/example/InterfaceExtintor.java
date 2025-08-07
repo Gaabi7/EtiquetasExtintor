@@ -102,35 +102,45 @@ public class InterfaceExtintor extends JFrame {
 
     private void buscarEVisualizarEtiqueta() {
         String localidade = campoLocalidade.getText().trim();
+        System.out.println("--- INICIANDO BUSCA ---");
+        System.out.println("Buscando pela localidade: '" + localidade + "'");
         if (localidade.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Por favor, insira um número de localidade.", "Entrada Inválida", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         Optional<Extintor> extOpt = extintores.stream()
-                .filter(ext -> ext.getNumeroDePosicionamento().equalsIgnoreCase(localidade))
-                .findFirst();
+        .filter(ext -> {
+            // Log para cada comparação feita
+            boolean encontrado = ext.getNumeroDePosicionamento().trim().equalsIgnoreCase(localidade);
+            if (encontrado) {
+                System.out.println(">>> CORRESPONDÊNCIA ENCONTRADA: " + ext.getNumeroDePosicionamento());
+            }
+            return encontrado;
+        })
+        .findFirst();
 
         if (extOpt.isPresent()) {
-            Extintor ext = extOpt.get();
-            zplAtual = GeradorZPL.gerarEtiqueta(ext); // Gera e armazena o ZPL
+        System.out.println("Extintor encontrado! Gerando etiqueta...");
+        Extintor ext = extOpt.get();
+        zplAtual = GeradorZPL.gerarEtiqueta(ext);
 
-            // Atualiza a aba de código
-            areaZPL.setText(zplAtual);
-            areaZPL.setCaretPosition(0); // Rola para o topo
+        areaZPL.setText(zplAtual);
+        areaZPL.setCaretPosition(0);
 
-            // Atualiza a aba de pré-visualização
-            atualizarPreviaDaEtiqueta(zplAtual);
+        atualizarPreviaDaEtiqueta(zplAtual);
 
         } else {
-            zplAtual = null; // Limpa o ZPL atual
+            System.out.println("!!! NENHUM EXTINTOR ENCONTRADO para a localidade: '" + localidade + "'"); // Falha!
+            zplAtual = null;
             areaZPL.setText("Extintor com localidade '" + localidade + "' não encontrado.");
-            labelImagemEtiqueta.setIcon(null); // Limpa a imagem
+            labelImagemEtiqueta.setIcon(null);
             labelImagemEtiqueta.setText("Extintor não encontrado.");
         }
+        System.out.println("--- FIM DA BUSCA ---");
     }
 
-    // NOVO: Método para buscar a imagem da etiqueta no Labelary
+    // Metodo para buscar a imagem da etiqueta no Labelary
     private void atualizarPreviaDaEtiqueta(String zpl) {
         // Mostra uma mensagem de carregamento
         labelImagemEtiqueta.setIcon(null);
@@ -190,7 +200,7 @@ public class InterfaceExtintor extends JFrame {
         }
 
         // --- LÓGICA DE IMPRESSÃO REAL ENTRARIA AQUI ---
-        // Por enquanto, apenas simulamos com uma caixa de diálogo.
+        // Por enquanto, apenas simula com uma caixa de diálogo.
         System.out.println("--- ENVIANDO PARA IMPRESSORA ---");
         System.out.println(zplAtual);
         System.out.println("--------------------------------");
