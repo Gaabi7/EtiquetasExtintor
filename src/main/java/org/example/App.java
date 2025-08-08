@@ -18,15 +18,11 @@ public class App {
 
         List<Extintor> extintores = LeitorExcel.lerExtintoresDoExcel(arquivo);
 
-        // Apenas para testar se leu os dados
-        for (Extintor ext : extintores) {
-            System.out.println(ext);
-        }
+        
 
         System.out.println("Iniciando aplicação...");
 
         SwingUtilities.invokeLater(() -> {
-            // Esta linha cria uma nova instância da sua janela,
             // fazendo com que ela apareça na tela.
             new InterfaceExtintor();
         });

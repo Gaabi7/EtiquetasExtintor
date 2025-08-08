@@ -1,15 +1,18 @@
 package org.example;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -18,8 +21,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class LeitorExcel {
 
-    private static final DateTimeFormatter mesAnoFormatter = DateTimeFormatter.ofPattern("MMM-yyyy", new Locale("pt", "BR"));
-    private static final DateTimeFormatter apenasAnoFormatter = DateTimeFormatter.ofPattern("yyyy");
+    private static final DateTimeFormatter FORMATADOR_MES_ANO = DateTimeFormatter.ofPattern("MMM-yyyy", new Locale("pt", "BR"));
+    private static final DateTimeFormatter FORMATADOR_APENAS_ANO = DateTimeFormatter.ofPattern("yyyy");
 
     public static List<Extintor> lerExtintoresDoExcel(InputStream arquivoExcel) {
         List<Extintor> extintores = new ArrayList<>();
@@ -34,45 +37,48 @@ public class LeitorExcel {
 
             for (int i = primeiraLinha; i <= ultimaLinha; i++) {
                 Row row = sheet.getRow(i);
+                if (row == null) continue;
 
                 //Pegar os Valores das celulas
-                String numeroDePosicionamento = getCellValueAsString(row.getCell(0));
-                String tipo = getCellValueAsString(row.getCell(1));
-                String capacidade = getCellValueAsString(row.getCell(2));
-                String numeroDeIdentificacao = getCellValueAsString(row.getCell(3));
-                String regiao = getCellValueAsString(row.getCell(6));
-                String endereco = getCellValueAsString(row.getCell(7));
+                String numeroDePosicionamento = getTextoSimples(row.getCell(0));
+                String tipo = getTextoSimples(row.getCell(1));
+                String capacidade = getTextoSimples(row.getCell(2));
+                String numeroDeIdentificacao = getTextoSimples(row.getCell(3));
+                String regiao = getTextoSimples(row.getCell(6));
+                String endereco = getTextoSimples(row.getCell(7));
 
-                //separa as datas
-                String dataRecargaFormatada = formatarData(row.getCell(4), mesAnoFormatter); // Retorna "mai/2024"
+                // Leitura de datas e anos usando o método getDataFormatada com o formatador apropriado
+                String dataRecargaCompleta = getDataFormatada(row.getCell(4), FORMATADOR_MES_ANO);
+                String proximaRecargaCompleta = getDataFormatada(row.getCell(8), FORMATADOR_MES_ANO);
+                
+                // --- PONTO DA CORREÇÃO: Usando o formatador de ano ---
+                String anoUltimoTeste = getDataFormatada(row.getCell(5), FORMATADOR_APENAS_ANO);
+                String anoProximoTeste = getDataFormatada(row.getCell(9), FORMATADOR_APENAS_ANO);
+
+                // --- Processamento dos dados lidos ---
+
+                // Separando mês/ano para Data de Recarga
                 String mesRecarga = "";
                 String anoRecarga = "";
-                if (dataRecargaFormatada != null && !dataRecargaFormatada.isEmpty()) {
-                    String[] partes = dataRecargaFormatada.split("/");
+                if (!dataRecargaCompleta.isEmpty()) {
+                    String[] partes = dataRecargaCompleta.split("-");
                     if (partes.length == 2) {
-                        mesRecarga = partes[0]; // "mai"
-                        anoRecarga = partes[1]; // "2024"
+                        mesRecarga = partes[0];
+                        anoRecarga = partes[1];
                     }
                 }
 
-                //ultimo Teste (somente ano)
-                String anoUltimoTeste = formatarData(row.getCell(5), apenasAnoFormatter);
-
-                // Proxima Recarga (mes-ano)
-                String proximaRecargaFormatada = formatarData(row.getCell(8), mesAnoFormatter);
+                // Separando mês/ano para Próxima Recarga
                 String mesProximaRecarga = "";
                 String anoProximaRecarga = "";
-                if (proximaRecargaFormatada != null && !proximaRecargaFormatada.isEmpty()) {
-                    String[] partes = proximaRecargaFormatada.split("/");
+                if (!proximaRecargaCompleta.isEmpty()) {
+                    String[] partes = proximaRecargaCompleta.split("-");
                     if (partes.length == 2) {
                         mesProximaRecarga = partes[0];
                         anoProximaRecarga = partes[1];
                     }
                 }
-
-                // Proximo Teste (somente ano)
-                String anoProximoTeste = formatarData(row.getCell(9), apenasAnoFormatter);
-
+                
                 Extintor extintor = new Extintor(
                     numeroDePosicionamento,
                     tipo,
@@ -100,64 +106,43 @@ public class LeitorExcel {
         
 
     //pegar os valores e passar para texto independente do conteudo da celula
-    private static String getCellValueAsString(Cell cell) {
-        if (cell == null) {
-            return ""; // Célula nula, retorna string vazia
-        }
-
-        switch (cell.getCellType()) {
-            case STRING:
-                return cell.getStringCellValue().trim();
-        
-            case NUMERIC:
-                // Verifica se a célula é uma data antes de tratar como número
-                if (DateUtil.isCellDateFormatted(cell)) {
-                    return cell.getDateCellValue().toString(); 
-                } else {
-                    // Trata números puros, preservando casas decimais se existirem
-                    double valor = cell.getNumericCellValue();
-                    if (valor == (long) valor) {
-                        // Se o número for inteiro (ex: 123.0), converte para "123"
-                        return String.valueOf((long) valor);
-                    } else {
-                        // Se tiver casas decimais (ex: 2.5), converte para "2.5"
-                        return String.valueOf(valor);
-                    }
-                }
-            case BLANK:
-                return "";
-
-            case BOOLEAN:
-                return String.valueOf(cell.getBooleanCellValue());
-
-            case FORMULA:
-                try {
-                    return cell.getStringCellValue().trim();
-                }catch (Exception e) {
-                    // Se a fórmula resultar em erro ou não for string, pode tentar como número
-                    try {
-                        return String.valueOf(cell.getNumericCellValue());
-                    } catch (Exception e2) {
-                        return ""; // Retorna vazio se tudo falhar
-                    }
-                }
-
-            default:
-            return "";
-        
-        }
+    private static String getTextoSimples(Cell cell) {
+        if (cell == null) return "";
+        return new DataFormatter().formatCellValue(cell).trim();
     }
 
-    private static String formatarData(Cell cell, DateTimeFormatter formatter) {
-        if (cell == null || cell.getCellType() == CellType.BLANK) {
-            return "";
-        }
+    private static String getDataFormatada(Cell cell, DateTimeFormatter formatter) {
+        if (cell == null) return "";
+        DataFormatter df = new DataFormatter(new Locale("pt", "BR"));
         
+        // Apenas células NUMÉRICAS podem ser datas. Isso evita erros com células de texto.
         if (cell.getCellType() == CellType.NUMERIC && DateUtil.isCellDateFormatted(cell)) {
-            LocalDate data = cell.getDateCellValue().toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        Date dataValor = cell.getDateCellValue();
+        if (dataValor != null) {
+            LocalDate data = dataValor.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
             return data.format(formatter);
         }
-        // Retorna vazio se a célula não for uma data válida
-        return "";
     }
+
+    // Caso 2: É texto (tentar interpretar)
+    String texto = df.formatCellValue(cell).trim();
+    if (!texto.isEmpty()) {
+        try {
+            // tenta converter se for só ano
+            if (formatter == FORMATADOR_APENAS_ANO && texto.matches("\\d{4}")) {
+                return texto;
+            }
+            // tenta converter se for mês-ano
+            if (formatter == FORMATADOR_MES_ANO) {
+                LocalDate data = LocalDate.parse("01-" + texto, DateTimeFormatter.ofPattern("dd-MMM-yyyy", new Locale("pt", "BR")));
+                return data.format(formatter);
+            }
+        } catch (Exception e) {
+            // Se não conseguir converter, retorna o texto original
+            return texto;
+        }
+    }
+
+    return "";
+}
 }

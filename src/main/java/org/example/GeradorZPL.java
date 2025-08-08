@@ -2,7 +2,7 @@ package org.example;
 
 public class GeradorZPL {
     private static final String ZPL_MODELO = """
-        CT~CD,~CC^~CT
+         CT~~CD,~CC^~CT~
         ^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR4,4~SD15^JUS^LRN^CI0^XZ
         ^XA
         ^MMT
@@ -39,7 +39,7 @@ public class GeradorZPL {
         ^FT262,64^A0N,25,31^FB276,1,0,C^FH\\^FDTecidos e Armarinhos^FS
         ^FT262,95^A0N,25,31^FB276,1,0,C^FH\\^FD Miguel Bartolomeu^FS
         ^FT221,150^A0N,28,28^FH\\^FDControle de Vistoria de Extintor^FS
-        ^FT30,233^A0N,28,28^FH\\^FDN\\AUM. DE IDENTIFI:^FS
+        ^FT30,233^A0N,28,28^FH\\^FDN\\A7 DE IDENTIFI:^FS
         ^FO228,234^GB153,0,3^FS
         ^FT104,591^A0N,21,24^FH\\^FDINSPE\\80AO MENSAL DE EQUIPAMENTO DE COMBATE A INCENDIO^FS
         ^FO39,637^GB757,581,4^FS
@@ -52,7 +52,7 @@ public class GeradorZPL {
         ^FH\\^FDLA,{QRCODE}^FS
         ^FT262,233^A0N,28,28^FH\\^FD{NUM_IDENTIFICACAO}^FS
         ^FO39,714^GB754,0,3^FS
-        ^FT49,359^A0N,28,28^FH\\^FDTIPO / CAPACIDADE:^FS
+        ^FT49,359^A0N,28,28^FH\\^FDTIPO/CAPACIDADE:^FS
         ^FO283,354^GB475,0,3^FS
         ^FT49,397^A0N,28,28^FH\\^FDDATA DA RECARGA:^FS
         ^FT49,279^A0N,28,28^FH\\^FDLOCAL:^FS
@@ -79,28 +79,21 @@ public class GeradorZPL {
         ^FO569,639^GB0,577,3^FS
         ^FO373,640^GB0,577,3^FS
         ^FT292,350^A0N,28,28^FH\\^FD{TIPO} / {CAPACIDADE}^FS
-        ^FT329,389^A0N,28,28^FH\\^FD ^FS
         ^FT469,392^A0N,28,28^FH\\^FD{DATA_RECARGA_MES}^FS
         ^FT642,389^A0N,28,28^FH\\^FD{DATA_RECARGA_ANO}^FS
-        ^FT329,432^A0N,28,28^FH\\^FD ^FS
         ^FT469,431^A0N,28,28^FH\\^FD{PROXIMA_RECARGA_MES}^FS
         ^FT642,432^A0N,28,28^FH\\^FD{PROXIMA_RECARGA_ANO}^FS
-        ^FT307,512^A0N,28,28^FH\\^FD ^FS
-        ^FT469,512^A0N,28,28^FH\\^FD ^FS
         ^FT642,512^A0N,28,28^FH\\^FD{PROXIMO_TESTE}^FS
-        ^FT392,233^A0N,28,28^FH\\^FDN\\AUM. DE LOCALIDADE:^FS
+        ^FT392,233^A0N,28,28^FH\\^FDN\\A7 DE LOCALIDADE:^FS
         ^FO637,234^GB153,0,3^FS
         ^FT686,233^A0N,28,28^FH\\^FD{NUM_POSICIONAMENTO}^FS
         ^FT143,274^A0N,28,28^FH\\^FD{REGIAO}^FS
         ^FT49,316^A0N,28,28^FH\\^FD{ENDERECO}^FS
-        ^FT49,477^A0N,28,28^FH\\^FD\\EÚLTIMO TESTE:^FS
-        ^FT292,472^A0N,28,28^FH\\^FD ^FS
-        ^FT469,472^A0N,28,28^FH\\^FD ^FS
+        ^FT49,477^A0N,28,28^FH\\^FD\\E9LTIMO TESTE:^FS
         ^FT642,472^A0N,28,28^FH\\^FD{ULTIMO_TESTE}^FS
-        ^PQ1,0,1,Y^XZ"
+        ^PQ1,0,1,Y^XZ
         """;
     
-
     public static String gerarEtiqueta(Extintor extintor) {
         String zpl = ZPL_MODELO;
 
