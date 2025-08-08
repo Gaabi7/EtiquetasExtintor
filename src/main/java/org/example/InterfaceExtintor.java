@@ -151,7 +151,6 @@ public class InterfaceExtintor extends JFrame {
             @Override
             protected ImageIcon doInBackground() throws Exception {
                 // URL da API do Labelary para gerar uma imagem PNG de 4x6 polegadas (aprox. 800x1200 pixels)
-                // A densidade é 8dpmm (203 dpi), que é padrão para muitas impressoras Zebra.
                 String urlBase = "http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/";
                 
                 // Prepara a conexão HTTP
