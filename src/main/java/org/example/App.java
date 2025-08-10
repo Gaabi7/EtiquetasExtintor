@@ -16,9 +16,8 @@ public class App {
             System.out.println("Arquivo encontrado");
         }
 
-        List<Extintor> extintores = LeitorExcel.lerExtintoresDoExcel(arquivo);
 
-        
+        List<Extintor> extintores = LeitorExcel.lerExtintoresDoExcel(arquivo);
 
         System.out.println("Iniciando aplicação...");
 

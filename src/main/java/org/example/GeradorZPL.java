@@ -2,7 +2,7 @@ package org.example;
 
 public class GeradorZPL {
     private static final String ZPL_MODELO = """
-         CT~~CD,~CC^~CT~
+        CT~~CD,~CC^~CT~
         ^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR4,4~SD15^JUS^LRN^CI0^XZ
         ^XA
         ^MMT

@@ -91,14 +91,17 @@ public class InterfaceExtintor extends JFrame {
         botaoVisualizar.addActionListener(e -> buscarEVisualizarEtiqueta());
         botaoImprimir.addActionListener(e -> imprimirEtiqueta());
 
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH); // 1. Define a janela para ser maximizada
+        setUndecorated(false); // 2. Mantém as decorações (barra de título, botões de fechar/minimizar)
+        setVisible(true);
+
         // --- Configurações da Janela ---
         setSize(800, 600); // Um tamanho inicial maior para acomodar a etiqueta
         setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setVisible(true);
     }
-
-
 
     private void buscarEVisualizarEtiqueta() {
         String localidade = campoLocalidade.getText().trim();
