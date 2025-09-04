@@ -71,18 +71,18 @@ public class LeitorExcel {
                 }
 
                 extintores.add(new Extintor(
-                        numeroDePosicionamento,
-                        tipo,
-                        capacidade,
-                        numeroDeIdentificacao,
-                        regiao,
-                        endereco,
-                        mesRecarga,
-                        anoRecarga,
-                        anoUltimoTeste,
-                        mesProximaRecarga,
-                        anoProximaRecarga,
-                        anoProximoTeste
+                    numeroDePosicionamento,
+                    tipo,
+                    capacidade,
+                    numeroDeIdentificacao,
+                    regiao,
+                    endereco,
+                    mesRecarga,
+                    anoRecarga,
+                    anoUltimoTeste,
+                    mesProximaRecarga,
+                    anoProximaRecarga,
+                    anoProximoTeste
                 ));
             }
 
@@ -129,7 +129,7 @@ public class LeitorExcel {
                 for (String padrao : padroes) {
                     try {
                         LocalDate data = LocalDate.parse("01-" + texto,
-                                DateTimeFormatter.ofPattern("dd-" + padrao, LOCALE_PTBR));
+                            DateTimeFormatter.ofPattern("dd-" + padrao, LOCALE_PTBR));
                         return data.format(formatter);
                     } catch (Exception ignore) {
                     }

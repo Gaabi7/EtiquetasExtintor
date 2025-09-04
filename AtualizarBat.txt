@@ -1,0 +1,12 @@
+Atualizar o .bat
+- abrir um novo terminal no VS e colar isto(Vai atualizar o JAR)
+mvn clean package
+
+- Abra um novo arquivo de texto e cole isso
+@echo off
+java -jar "EtiquetasExtintor-1.0.0-jar-with-dependencies.jar"
+pause
+
+- Salve este arquivo de texto como .bat.
+
+- crie o atalho e execute.

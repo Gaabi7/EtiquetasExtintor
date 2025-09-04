@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
-
+  
   <groupId>org.example</groupId>
   <artifactId>EtiquetasExtintor</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>1.0.0</version> <!-- Mudei de SNAPSHOT para uma versão final -->
   <packaging>jar</packaging>
 
   <name>EtiquetasExtintor</name>
@@ -18,23 +18,17 @@
     <maven.compiler.target>15</maven.compiler.target>
   </properties>
 
-  <!-- ✅ Aqui estão todas as dependências em um único bloco -->
   <dependencies>
-    <!-- Apache POI para .xls -->
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
       <version>5.2.5</version>
     </dependency>
-
-    <!-- Apache POI para .xlsx -->
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi-ooxml</artifactId>
       <version>5.2.5</version>
     </dependency>
-
-    <!-- JUnit para testes -->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
@@ -43,15 +37,44 @@
     </dependency>
   </dependencies>
 
+  
   <build>
     <plugins>
+      
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>exec-maven-plugin</artifactId>
         <version>3.1.0</version>
         <configuration>
-          <mainClass>com.seupacote.Main</mainClass>
+          <mainClass>org.example.App</mainClass>
         </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.6.0</version> <!-- Usando uma versão recente e estável -->
+        <configuration>
+          <archive>
+            <manifest>
+              <!-- Define qual classe tem o método main() para ser executado -->
+              <mainClass>org.example.App</mainClass>
+            </manifest>
+          </archive>
+          <descriptorRefs>
+            <!-- Esta é a instrução mágica que diz: "coloque todas as dependências no JAR" -->
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase> <!-- O plugin será executado durante a fase 'package' -->
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>
