@@ -3,8 +3,9 @@ package org.example;
 public class GeradorZPL {
     private static final String ZPL_MODELO = """
         CT~~CD,~CC^~CT~
-        ^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^PR4,4~SD15^JUS^LRN^CI0^XZ
+        ^XA~TA000~JSN^LT0^MNW^MTD^PON^PMN^LH0,0^JMA^JUS^LRN^CI0^XZ
         ^XA
+        ^CI28
         ^MMT
         ^PW831
         ^LL1279
@@ -39,14 +40,14 @@ public class GeradorZPL {
         ^FT262,64^A0N,25,31^FB276,1,0,C^FH\\^FDTecidos e Armarinhos^FS
         ^FT262,95^A0N,25,31^FB276,1,0,C^FH\\^FD Miguel Bartolomeu^FS
         ^FT221,150^A0N,28,28^FH\\^FDControle de Vistoria de Extintor^FS
-        ^FT30,233^A0N,28,28^FH\\^FDN\\A7 DE IDENTIFI:^FS
+        ^FT30,233^A0N,28,28^FH\\^FDNº DE IDENTIFI:^FS
         ^FO228,234^GB153,0,3^FS
-        ^FT104,591^A0N,21,24^FH\\^FDINSPE\\80AO MENSAL DE EQUIPAMENTO DE COMBATE A INCENDIO^FS
+        ^FT104,591^A0N,21,24^FH\\^FDINSPEÇÃO MENSAL DE EQUIPAMENTO DE COMBATE A INCENDIO^FS
         ^FO39,637^GB757,581,4^FS
         ^FT76,662^A0N,20,19^FH\\^FDDIA^FS
         ^FT188,662^A0N,20,19^FH\\^FDMES^FS
         ^FT301,662^A0N,20,19^FH\\^FDANO^FS
-        ^FT414,662^A0N,20,19^FH\\^FDOBSERVA\\80AO^FS
+        ^FT414,662^A0N,20,19^FH\\^FDOBSERVAÇÃO^FS
         ^FT652,662^A0N,20,19^FH\\^FDVISTO^FS
         ^FT649,159^BQN,2,6
         ^FH\\^FDLA,{QRCODE}^FS
@@ -84,20 +85,20 @@ public class GeradorZPL {
         ^FT469,431^A0N,28,28^FH\\^FD{PROXIMA_RECARGA_MES}^FS
         ^FT642,432^A0N,28,28^FH\\^FD{PROXIMA_RECARGA_ANO}^FS
         ^FT642,512^A0N,28,28^FH\\^FD{PROXIMO_TESTE}^FS
-        ^FT392,233^A0N,28,28^FH\\^FDN\\A7 DE LOCALIDADE:^FS
+        ^FT392,233^A0N,28,28^FH\\^FDNº DE LOCALIDADE:^FS
         ^FO637,234^GB153,0,3^FS
         ^FT686,233^A0N,28,28^FH\\^FD{NUM_POSICIONAMENTO}^FS
         ^FT143,274^A0N,28,28^FH\\^FD{REGIAO}^FS
         ^FT49,316^A0N,28,28^FH\\^FD{ENDERECO}^FS
-        ^FT49,477^A0N,28,28^FH\\^FD\\E9LTIMO TESTE:^FS
+        ^FT49,477^A0N,28,28^FH\\^FDÚLTIMO TESTE:^FS
         ^FT642,472^A0N,28,28^FH\\^FD{ULTIMO_TESTE}^FS
         ^PQ1,0,1,Y^XZ
         """;
-    
+
     public static String gerarEtiqueta(Extintor extintor) {
         String zpl = ZPL_MODELO;
 
-        // Substituições simples
+        // Substituições diretas, sem tratamento especial. O comando ^CI28 cuida da acentuação.
         zpl = zpl.replace("{NUM_IDENTIFICACAO}", extintor.getNumeroDeIdentificacao());
         zpl = zpl.replace("{NUM_POSICIONAMENTO}", extintor.getNumeroDePosicionamento());
         zpl = zpl.replace("{TIPO}", extintor.getTipo());
@@ -106,7 +107,7 @@ public class GeradorZPL {
         zpl = zpl.replace("{ENDERECO}", extintor.getEndereco());
         zpl = zpl.replace("{QRCODE}", extintor.getNumeroDePosicionamento());
 
-        // Substituições de datas (sem precisar formatar)
+        // Substituições de datas
         zpl = zpl.replace("{DATA_RECARGA_MES}", extintor.getMesRecarga());
         zpl = zpl.replace("{DATA_RECARGA_ANO}", extintor.getAnoRecarga());
         zpl = zpl.replace("{ULTIMO_TESTE}", extintor.getAnoUltimoTeste());
@@ -116,6 +117,4 @@ public class GeradorZPL {
 
         return zpl;
     }
-
 }
-

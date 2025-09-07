@@ -7,17 +7,6 @@ import javax.swing.SwingUtilities;
 
 public class App {
     public static void main(String[] args) {
-        InputStream arquivo = App.class.getResourceAsStream("/extintores.xlsx");
-
-        if (arquivo == null) {
-            System.out.println("Arquivo não encontrado");
-            return;
-        } else {
-            System.out.println("Arquivo encontrado");
-        }
-
-
-        List<Extintor> extintores = LeitorExcel.lerExtintoresDoExcel(arquivo);
 
         System.out.println("Iniciando aplicação...");
 
@@ -25,7 +14,5 @@ public class App {
             // fazendo com que ela apareça na tela.
             new InterfaceExtintor();
         });
-
-        
     }
 }

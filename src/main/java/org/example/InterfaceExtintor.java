@@ -1,9 +1,9 @@
 package org.example;
 
 import java.awt.BorderLayout;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -12,8 +12,16 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.imageio.ImageIO;
+import javax.print.Doc;
+import javax.print.DocFlavor;
+import javax.print.DocPrintJob;
+import javax.print.PrintException;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.SimpleDoc;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -24,62 +32,74 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.SwingWorker;
+import javax.swing.border.EmptyBorder;
 
 public class InterfaceExtintor extends JFrame {
 
+    private File arquivoPlanilhaSelecionado;
     private List<Extintor> extintores;
     private JTextField campoLocalidade;
     private JTextArea areaZPL;
-    private JLabel labelImagemEtiqueta; // Label para mostrar a imagem da etiqueta
-    private String zplAtual; // Guarda o ZPL gerado para ser usado pela impressão
+    private JLabel labelImagemEtiqueta;
+    private String zplAtual;
+    private JComboBox<String> comboImpressoras;
 
     public InterfaceExtintor() {
         super("Controle de Etiquetas de Extintor");
 
-        // --- Carregamento dos dados
-        try {
-            InputStream arquivo = App.class.getResourceAsStream("/extintores.xlsx");
-            if (arquivo == null) {
-                throw new IllegalStateException("Arquivo 'extintores.xlsx' não encontrado no classpath.");
-            }
-            extintores = LeitorExcel.lerExtintoresDoExcel(arquivo);
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(this,
-                    "Erro crítico ao carregar a planilha de extintores: " + e.getMessage(),
-                    "Erro de Leitura",
-                    JOptionPane.ERROR_MESSAGE);
-            // Encerra a aplicação se não conseguir ler o arquivo, pois ela se torna inútil.
-            System.exit(1);
-        }
-        
-        // --- Painel Superior ---
-        JPanel painelSuperior = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        painelSuperior.add(new JLabel("Numero da Localidade:"));
-        campoLocalidade = new JTextField(15);
+        JPanel painelSuperior = new JPanel(null); // Define o layout como nulo
+        painelSuperior.setBorder(new EmptyBorder(10, 10, 10, 10)); // Borda ainda funciona
+
+        // Botão "Selecione a planilha"
+        JButton botaoSelecionarPlanilha = new JButton("Selecione a planilha");
+        botaoSelecionarPlanilha.setBounds(20, 20, 150, 25); // x, y, width, height
+        painelSuperior.add(botaoSelecionarPlanilha);
+
+        // Label "Numero da Localidade:"
+        JLabel labelLocalidade = new JLabel("Número da Localidade:");
+        labelLocalidade.setBounds(180, 20, 150, 25);
+        painelSuperior.add(labelLocalidade);
+
+        // Campo de texto para localidade
+        campoLocalidade = new JTextField(50);
+        campoLocalidade.setBounds(320, 20, 100, 25);
         painelSuperior.add(campoLocalidade);
 
-        //botao visualizar
+        // Botão "Visualizar Etiqueta"
         JButton botaoVisualizar = new JButton("Visualizar Etiqueta");
+        botaoVisualizar.setBounds(450, 20, 150, 25);
         painelSuperior.add(botaoVisualizar);
 
-        //botao imprimir
-        JButton botaoImprimir = new JButton("Imprimir");
-        painelSuperior.add(botaoImprimir);
+        // Label "Selecione a Impressora:"
+        JLabel labelImpressora = new JLabel("Selecione a Impressora:");
+        labelImpressora.setBounds(20, 60, 150, 25); // Nova linha (y=60)
+        painelSuperior.add(labelImpressora);
 
-        //painel de alterar
+        // JComboBox para selecionar impressora
+        comboImpressoras = new JComboBox<>();
+        comboImpressoras.setBounds(180, 60, 250, 25); // Na mesma linha do label da impressora
+        painelSuperior.add(comboImpressoras);
+
+        // Botão "Imprimir"
+        JButton botaoImprimir = new JButton("Imprimir");
+        botaoImprimir.setBounds(450, 60, 150, 25); // Na mesma linha do combo box
+        painelSuperior.add(botaoImprimir);
+        
+        painelSuperior.setPreferredSize(new java.awt.Dimension(620, 100)); // Exemplo de tamanho (ajuste conforme necessário)
+
+        // --- Painel com Abas (Pré-visualização e Código ZPL) ---
         JTabbedPane painelComAbas = new JTabbedPane();
 
         // Aba 1: Pré-visualização da Imagem
         labelImagemEtiqueta = new JLabel("A pré-visualização da etiqueta aparecerá aqui.", SwingConstants.CENTER);
-        labelImagemEtiqueta.setVerticalAlignment(SwingConstants.TOP); // Alinha a imagem no topo
+        labelImagemEtiqueta.setVerticalAlignment(SwingConstants.TOP);
         JScrollPane scrollImagem = new JScrollPane(labelImagemEtiqueta);
         painelComAbas.addTab("Pré-visualização", scrollImagem);
 
         // Aba 2: Código ZPL
         areaZPL = new JTextArea(20, 70);
         areaZPL.setFont(new Font("Monospaced", Font.PLAIN, 12));
-        areaZPL.setEditable(false); // O usuário não deve editar o código gerado
+        areaZPL.setEditable(false);
         JScrollPane scrollZPL = new JScrollPane(areaZPL);
         painelComAbas.addTab("Código ZPL", scrollZPL);
 
@@ -89,19 +109,55 @@ public class InterfaceExtintor extends JFrame {
         add(painelComAbas, BorderLayout.CENTER);
 
         // --- Ações dos Botões ---
+        botaoSelecionarPlanilha.addActionListener(e -> selecionarPlanilha());
         botaoVisualizar.addActionListener(e -> buscarEVisualizarEtiqueta());
         botaoImprimir.addActionListener(e -> imprimirEtiqueta());
 
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setExtendedState(JFrame.MAXIMIZED_BOTH); // 1. Define a janela para ser maximizada
-        setUndecorated(false); // 2. Mantém as decorações (barra de título, botões de fechar/minimizar)
-        setVisible(true);
-
+        // Carrega as impressoras ao iniciar
+        carregarImpressoras();
+        
         // --- Configurações da Janela ---
-        setSize(1100, 1000); // Um tamanho inicial maior para acomodar a etiqueta
-        setLocationRelativeTo(null);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setUndecorated(false);
         setVisible(true);
+        setSize(1100, 1000);
+        setLocationRelativeTo(null);
+    }
+    
+    private void carregarImpressoras() {
+        // Limpa o combo box antes de carregar
+        comboImpressoras.removeAllItems();
+        
+        PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
+        if (printServices.length > 0) {
+            for (PrintService service : printServices) {
+                comboImpressoras.addItem(service.getName());
+            }
+        } else {
+            comboImpressoras.addItem("Nenhuma impressora encontrada.");
+            JOptionPane.showMessageDialog(this, "Nenhuma impressora encontrada no sistema.", "Aviso", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+
+    private void selecionarPlanilha() {
+        javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+        fileChooser.setDialogTitle("Selecione a planilha Excel");
+        fileChooser.setFileFilter(new javax.swing.filechooser.FileNameExtensionFilter("Arquivos Excel (*.xlsx)", "xlsx"));
+
+        int resultado = fileChooser.showOpenDialog(this);
+        if (resultado == javax.swing.JFileChooser.APPROVE_OPTION) {
+            arquivoPlanilhaSelecionado = fileChooser.getSelectedFile();
+            JOptionPane.showMessageDialog(this, "Planilha selecionada: " + arquivoPlanilhaSelecionado.getName());
+
+            try (InputStream arquivo = new java.io.FileInputStream(arquivoPlanilhaSelecionado)) {
+                extintores = LeitorExcel.lerExtintoresDoExcel(arquivo);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(this, "Erro ao carregar a planilha selecionada: " + ex.getMessage(),
+                        "Erro de Leitura", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     private void buscarEVisualizarEtiqueta() {
@@ -113,29 +169,33 @@ public class InterfaceExtintor extends JFrame {
             return;
         }
 
+        if (extintores == null) {
+            JOptionPane.showMessageDialog(this, "Por favor, selecione e carregue uma planilha primeiro.", "Aviso", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         Optional<Extintor> extOpt = extintores.stream()
-        .filter(ext -> {
-            // Log para cada comparação feita
-            boolean encontrado = ext.getNumeroDePosicionamento().trim().equalsIgnoreCase(localidade);
-            if (encontrado) {
-                System.out.println(">>> CORRESPONDÊNCIA ENCONTRADA: " + ext.getNumeroDePosicionamento());
-            }
-            return encontrado;
-        })
-        .findFirst();
+                .filter(ext -> {
+                    boolean encontrado = ext.getNumeroDePosicionamento().trim().equalsIgnoreCase(localidade);
+                    if (encontrado) {
+                        System.out.println(">>> CORRESPONDÊNCIA ENCONTRADA: " + ext.getNumeroDePosicionamento());
+                    }
+                    return encontrado;
+                })
+                .findFirst();
 
         if (extOpt.isPresent()) {
-        System.out.println("Extintor encontrado! Gerando etiqueta..."); //Sucesso :)
-        Extintor ext = extOpt.get();
-        zplAtual = GeradorZPL.gerarEtiqueta(ext);
+            System.out.println("Extintor encontrado! Gerando etiqueta...");
+            Extintor ext = extOpt.get();
+            zplAtual = GeradorZPL.gerarEtiqueta(ext);
 
-        areaZPL.setText(zplAtual);
-        areaZPL.setCaretPosition(0);
+            areaZPL.setText(zplAtual);
+            areaZPL.setCaretPosition(0);
 
-        atualizarPreviaDaEtiqueta(zplAtual);
+            atualizarPreviaDaEtiqueta(zplAtual);
 
         } else {
-            System.out.println("!!! NENHUM EXTINTOR ENCONTRADO para a localidade: '" + localidade + "'"); // Falha!
+            System.out.println("!!! NENHUM EXTINTOR ENCONTRADO para a localidade: '" + localidade + "'");
             zplAtual = null;
             areaZPL.setText("Extintor com localidade '" + localidade + "' não encontrado.");
             labelImagemEtiqueta.setIcon(null);
@@ -144,38 +204,29 @@ public class InterfaceExtintor extends JFrame {
         System.out.println("--- FIM DA BUSCA ---");
     }
 
-    // Metodo para buscar a imagem da etiqueta no Labelary
     private void atualizarPreviaDaEtiqueta(String zpl) {
-
-        // Mostra uma mensagem de carregamento
         labelImagemEtiqueta.setIcon(null);
         labelImagemEtiqueta.setText("Carregando pré-visualização...");
 
-        // Executa a requisição de rede em uma thread separada para não travar a interface
         SwingWorker<ImageIcon, Void> worker = new SwingWorker<ImageIcon, Void>() {
             @Override
             protected ImageIcon doInBackground() throws Exception {
-                // URL da API do Labelary para gerar uma imagem PNG de 4x6 polegadas (aprox. 800x1200 pixels)
-                String urlBase = "https://www.labelzoom.net/app/converter/from-zpl?to=png";
-                
-                // Prepara a conexão HTTP
-                URL url = new URL(urlBase );
+                String urlBase = "http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/";
+                URL url = new URL(urlBase);
                 HttpURLConnection con = (HttpURLConnection) url.openConnection();
                 con.setRequestMethod("POST");
                 con.setDoOutput(true);
                 con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                con.setRequestProperty("Accept", "image/png"); // Queremos um PNG de volta
+                con.setRequestProperty("Accept", "image/png");
+                con.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 
-                // Envia o código ZPL no corpo da requisição
                 con.getOutputStream().write(zpl.getBytes(StandardCharsets.UTF_8));
 
-                // Verifica se a requisição foi bem-sucedida
                 if (con.getResponseCode() == HttpURLConnection.HTTP_OK) {
                     InputStream inputStream = con.getInputStream();
                     BufferedImage bufferedImage = ImageIO.read(inputStream);
                     return new ImageIcon(bufferedImage);
                 } else {
-                    // Se deu erro, lança uma exceção com a mensagem do servidor
                     throw new RuntimeException("Falha na API do Labelary: " + con.getResponseMessage());
                 }
             }
@@ -183,9 +234,9 @@ public class InterfaceExtintor extends JFrame {
             @Override
             protected void done() {
                 try {
-                    ImageIcon imagem = get(); // Pega o resultado da thread
+                    ImageIcon imagem = get();
                     labelImagemEtiqueta.setIcon(imagem);
-                    labelImagemEtiqueta.setText(null); // Remove o texto "Carregando..."
+                    labelImagemEtiqueta.setText(null);
                 } catch (Exception e) {
                     e.printStackTrace();
                     labelImagemEtiqueta.setIcon(null);
@@ -193,7 +244,7 @@ public class InterfaceExtintor extends JFrame {
                 }
             }
         };
-        worker.execute(); // Inicia a thread
+        worker.execute();
     }
 
     private void imprimirEtiqueta() {
@@ -202,35 +253,34 @@ public class InterfaceExtintor extends JFrame {
             return;
         }
 
+        String nomeDaImpressora = (String) comboImpressoras.getSelectedItem();
+
+        if (nomeDaImpressora == null || nomeDaImpressora.trim().isEmpty() || nomeDaImpressora.equals("Nenhuma impressora encontrada.")) {
+            JOptionPane.showMessageDialog(this, "Por favor, selecione uma impressora válida.", "Erro de Impressão", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        PrintService impressoraZebra = null;
+        PrintService[] services = PrintServiceLookup.lookupPrintServices(null, null);
+        for (PrintService service : services) {
+            if (service.getName().equalsIgnoreCase(nomeDaImpressora)) {
+                impressoraZebra = service;
+                break;
+            }
+        }
+
+        if (impressoraZebra == null) {
+            JOptionPane.showMessageDialog(this, "A impressora selecionada não foi encontrada.", "Erro de Impressão", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
         try {
-            
-            //*****ATENÇÃO***** --> AQUI MUDA O NOME DA IMPRESSORA, DIGITE EXTAMENTE IGUAL
-            String nomeDaImpressora = "Digita O Nome";
+            DocPrintJob job = impressoraZebra.createPrintJob();
+            // **CORREÇÃO APLICADA AQUI**: Envia os bytes como UTF-8
+            byte[] bytesZPL = zplAtual.getBytes(StandardCharsets.UTF_8);
+            DocFlavor flavor = DocFlavor.BYTE_ARRAY.AUTOSENSE;
+            Doc doc = new SimpleDoc(bytesZPL, flavor, null);
 
-            //prucurando a impressora pelo nome
-            javax.print.PrintService[] services = javax.print.PrintServiceLookup.lookupPrintServices(null, null);
-            javax.print.PrintService impressoraZebra = null;
-            for (javax.print.PrintService service : services) {
-                if (service.getName().equalsIgnoreCase(nomeDaImpressora)) {
-                    impressoraZebra = service;
-                    break;
-                }
-            }
-
-            if (impressoraZebra == null) {
-                JOptionPane.showMessageDialog(this, "Impressora nao encontrada: " + nomeDaImpressora + "Erro" + JOptionPane.ERROR_MESSAGE);
-                return;
-            }
-
-            //cria o trabalho de impressão
-            javax.print.DocPrintJob job = impressoraZebra.createPrintJob();
-
-            //cria um documentos com os bytes do ZPL
-            byte[] bytesZPL = zplAtual.getBytes();
-            javax.print.DocFlavor flavor = javax.print.DocFlavor.BYTE_ARRAY.AUTOSENSE;
-            javax.print.Doc doc = new javax.print.SimpleDoc(bytesZPL, flavor, null);
-
-            //Envia para a impressora
             job.print(doc, null);
             JOptionPane.showMessageDialog(this, "Etiqueta enviada para a impressora!", "Sucesso", JOptionPane.INFORMATION_MESSAGE);
 
